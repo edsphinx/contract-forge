@@ -1,6 +1,14 @@
-# ContractForge
+<div align="center">
+  <img src="public/logo-with-text.jpg" alt="ContractForge Logo" width="600"/>
 
-**A Decentralized Marketplace and Registry for Stellar Smart Contracts.**
+  # ContractForge
+
+  **A Decentralized Marketplace and Registry for Stellar Smart Contracts.**
+
+  [![Stellar](https://img.shields.io/badge/Stellar-Soroban-7D00FF?style=flat-square)](https://stellar.org)
+  [![Hackathon](https://img.shields.io/badge/Scaffold_Stellar-Hackathon-00D8FF?style=flat-square)](https://dorahacks.io/hackathon/scaffoldstellar/detail)
+
+</div>
 
 This project is a submission for the **Scaffold Stellar Hackathon** on DoraHacks.
 
