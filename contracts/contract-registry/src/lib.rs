@@ -207,7 +207,17 @@ impl ContractRegistry {
     }
 
     /// Increment deployment count (called by DeploymentManager)
-    pub fn increment_deployment_count(env: Env, contract_id: u32) -> Result<(), Error> {
+    pub fn increment_deployment_count(
+        env: Env, 
+        contract_id: u32,
+        caller: Address
+    ) -> Result<(), Error> {
+        // Require authentication from caller
+        caller.require_auth();
+        
+        // TODO: Add proper access control - only authorized deployment managers should call this
+        // For now, any authenticated caller can increment the count
+        
         let mut metadata =
             storage::get_contract(&env, contract_id).ok_or(Error::ContractNotFound)?;
 
