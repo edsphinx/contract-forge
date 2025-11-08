@@ -189,9 +189,15 @@ impl ContractRegistry {
         matching
     }
 
-    /// Verify a contract (auditors only - for MVP, anyone can verify for testing)
+    /// Verify a contract (auditors only)
     pub fn verify_contract(env: Env, contract_id: u32, auditor: Address) -> Result<(), Error> {
         auditor.require_auth();
+        
+        // TODO: Implement proper auditor role verification
+        // For MVP: Check if auditor is in approved auditors list
+        // if !storage::is_approved_auditor(&env, &auditor) {
+        //     return Err(Error::UnauthorizedAuditor);
+        // }
 
         let mut metadata =
             storage::get_contract(&env, contract_id).ok_or(Error::ContractNotFound)?;
