@@ -55,6 +55,6 @@ pub fn get_category_contracts(env: &Env, category: &Category) -> Vec<u32> {
 pub fn add_to_category(env: &Env, category: &Category, contract_id: u32) {
     let mut contracts = get_category_contracts(env, category);
     contracts.push_back(contract_id);
-    let cat_num = *category as u32;
-    env.storage().instance().set(&cat_num, &contracts);
+    let cat_key = Symbol::new(env, &format!("CAT_{}", *category as u32));
+    env.storage().instance().set(&cat_key, &contracts);
 }
