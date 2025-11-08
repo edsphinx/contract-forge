@@ -170,7 +170,10 @@ impl ContractRegistry {
     }
 
     /// Search contracts by tag
+    /// Search contracts by tag
     pub fn search_by_tag(env: Env, tag: String) -> Vec<ContractMetadata> {
+        // TODO: Implement tag indexing for better performance
+        // For now, using linear search through all contracts
         let all_contracts = Self::get_all_contracts(env.clone());
         let mut matching = Vec::new(&env);
 
