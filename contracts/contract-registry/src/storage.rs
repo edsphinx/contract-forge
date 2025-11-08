@@ -45,10 +45,10 @@ pub fn add_to_all_contracts(env: &Env, contract_id: u32) {
 }
 
 pub fn get_category_contracts(env: &Env, category: &Category) -> Vec<u32> {
-    let cat_num = *category as u32;
+    let cat_key = Symbol::new(env, &format!("CAT_{}", *category as u32));
     env.storage()
         .instance()
-        .get(&cat_num)
+        .get(&cat_key)
         .unwrap_or(Vec::new(env))
 }
 
