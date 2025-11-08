@@ -50,6 +50,7 @@ export const renderOneOf = ({
   let tagName;
 
   if (path.length > 1) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     tagName = get(parsedSorobanOperation.args[keyName], path.join("."))?.tag;
   } else {
     tagName = (parsedSorobanOperation.args[keyName] as AnyObject)?.tag;
@@ -109,6 +110,7 @@ export const renderOneOf = ({
         fieldSize="md"
         label={name}
         value={
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
           (get(parsedSorobanOperation.args, path.join(".")) as AnyObject)
             ?.tag as string
         }
