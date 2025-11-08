@@ -12,7 +12,13 @@ pub fn get_counter(env: &Env) -> u32 {
 
 pub fn increment_counter(env: &Env) -> u32 {
     let counter = get_counter(env);
-    let new_counter = counter + 1;
+    let new_counter = counter.checked_add(1).unwrap_or_else(|| {
+        // If overflow occurs, we could either:
+        // 1. Panic (current behavior)
+        // 2. Return an error
+        // 3. Reset to 1 (not recommended as it could cause ID conflicts)
+        panic!("Contract ID counter overflow")
+    });
     env.storage().instance().set(&COUNTER, &new_counter);
     new_counter
 }
