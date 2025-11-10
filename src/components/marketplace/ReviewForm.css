@@ -1,0 +1,52 @@
+.review-form {
+  background: var(--color-bg-secondary);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.review-form .form-header {
+  margin-bottom: 1.5rem;
+}
+
+.review-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.review-form .form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.star-rating {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.star-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: color 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+
+.star-button.filled {
+  color: #fbbf24;
+}
+
+.star-button:hover {
+  color: #fbbf24;
+  transform: scale(1.1);
+}
+
+.char-count {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}

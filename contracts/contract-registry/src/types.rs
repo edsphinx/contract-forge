@@ -57,5 +57,4 @@ pub enum Error {
     InvalidMetadata = 4,
     InvalidWasmHash = 5,
     UnauthorizedVerification = 6,
-    UnauthorizedAuditor = 7,
 }

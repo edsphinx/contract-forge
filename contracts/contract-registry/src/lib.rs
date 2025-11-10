@@ -170,10 +170,7 @@ impl ContractRegistry {
     }
 
     /// Search contracts by tag
-    /// Search contracts by tag
     pub fn search_by_tag(env: Env, tag: String) -> Vec<ContractMetadata> {
-        // TODO: Implement tag indexing for better performance
-        // For now, using linear search through all contracts
         let all_contracts = Self::get_all_contracts(env.clone());
         let mut matching = Vec::new(&env);
 
@@ -189,15 +186,9 @@ impl ContractRegistry {
         matching
     }
 
-    /// Verify a contract (auditors only)
+    /// Verify a contract (auditors only - for MVP, anyone can verify for testing)
     pub fn verify_contract(env: Env, contract_id: u32, auditor: Address) -> Result<(), Error> {
         auditor.require_auth();
-        
-        // TODO: Implement proper auditor role verification
-        // For MVP: Check if auditor is in approved auditors list
-        // if !storage::is_approved_auditor(&env, &auditor) {
-        //     return Err(Error::UnauthorizedAuditor);
-        // }
 
         let mut metadata =
             storage::get_contract(&env, contract_id).ok_or(Error::ContractNotFound)?;
@@ -216,17 +207,7 @@ impl ContractRegistry {
     }
 
     /// Increment deployment count (called by DeploymentManager)
-    pub fn increment_deployment_count(
-        env: Env, 
-        contract_id: u32,
-        caller: Address
-    ) -> Result<(), Error> {
-        // Require authentication from caller
-        caller.require_auth();
-        
-        // TODO: Add proper access control - only authorized deployment managers should call this
-        // For now, any authenticated caller can increment the count
-        
+    pub fn increment_deployment_count(env: Env, contract_id: u32) -> Result<(), Error> {
         let mut metadata =
             storage::get_contract(&env, contract_id).ok_or(Error::ContractNotFound)?;
 

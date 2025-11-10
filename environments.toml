@@ -11,6 +11,9 @@ default = true # Optional. Whether to use this account as the `--source` for com
 [development.contracts]
 fungible_allowlist_example = { client = true, constructor_args = "--admin me --manager me --initial_supply 1000000000000000000000000" }
 nft_enumerable_example = { client = true, constructor_args = "--owner me" }
+contract-registry = { client = true }
+deployment-manager = { client = true }
+review-system = { client = true }
 
 # Rather than in one list, TOML allows specifying contracts in their own "sections"
 [development.contracts.guess_the_number]

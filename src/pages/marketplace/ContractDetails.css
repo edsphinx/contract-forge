@@ -1,0 +1,292 @@
+.details-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.details-header {
+  margin-bottom: 2rem;
+}
+
+.details-content {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 2rem;
+}
+
+.details-main {
+  min-width: 0;
+}
+
+.details-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Header Section */
+.contract-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  border-bottom: 1px solid var(--pal-border-secondary);
+}
+
+.title-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.title-section h1 {
+  margin: 0;
+}
+
+.badges {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Description Section */
+.contract-description {
+  padding: 2rem;
+  border-bottom: 1px solid var(--pal-border-secondary);
+}
+
+.contract-description p {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--pal-text-secondary);
+}
+
+/* Metadata Section */
+.contract-metadata {
+  padding: 2rem;
+  border-bottom: 1px solid var(--pal-border-secondary);
+}
+
+.metadata-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.metadata-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.metadata-label {
+  color: var(--pal-text-tertiary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metadata-value {
+  color: var(--pal-text-primary);
+  font-weight: 600;
+}
+
+/* Tags Section */
+.contract-tags {
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.tags-label {
+  color: var(--pal-text-tertiary);
+  font-weight: 500;
+}
+
+.tags-list {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Sidebar Cards */
+.details-sidebar > div {
+  padding: 1.5rem;
+}
+
+.details-sidebar h3 {
+  margin: 0 0 1rem 0;
+}
+
+/* Author Info */
+.author-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.author-address {
+  word-break: break-all;
+  color: var(--pal-text-secondary);
+  font-family: monospace;
+  background: var(--pal-background-secondary);
+  padding: 0.75rem;
+  border-radius: 4px;
+}
+
+/* Tech Info */
+.tech-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.info-label {
+  color: var(--pal-text-tertiary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.hash-value {
+  word-break: break-all;
+  color: var(--pal-text-secondary);
+  font-family: monospace;
+  background: var(--pal-background-secondary);
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin: 0;
+}
+
+/* Reviews Section */
+.reviews-section {
+  margin-top: 2rem;
+}
+
+.reviews-header {
+  margin-bottom: 2rem;
+}
+
+.rating-summary {
+  margin-top: 1rem;
+}
+
+.average-rating {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.rating-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--pal-text-primary);
+}
+
+.rating-stars {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.rating-stars .star {
+  font-size: 1.5rem;
+  color: var(--pal-text-tertiary);
+}
+
+.rating-stars .star.filled {
+  color: #fbbf24;
+}
+
+.review-count {
+  font-size: 0.875rem;
+  color: var(--pal-text-tertiary);
+}
+
+.reviews-list-container {
+  margin-top: 2rem;
+}
+
+/* Loading and Error States */
+.loading-container,
+.error-card,
+.connect-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .details-content {
+    grid-template-columns: 1fr;
+  }
+
+  .details-sidebar {
+    order: 2;
+  }
+
+  .metadata-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .details-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .contract-header {
+    padding: 1.5rem;
+  }
+
+  .contract-description,
+  .contract-metadata,
+  .contract-tags {
+    padding: 1.5rem;
+  }
+
+  .metadata-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .contract-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .contract-header,
+  .contract-description,
+  .contract-metadata,
+  .contract-tags {
+    padding: 1rem;
+  }
+}

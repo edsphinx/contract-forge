@@ -1,0 +1,189 @@
+.deployment-history-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.deployment-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  gap: 2rem;
+}
+
+.deployment-subtitle {
+  color: var(--pal-text-secondary);
+  margin-top: 0.5rem;
+}
+
+.deployments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.deployment-card-wrapper {
+  background: var(--pal-background-primary);
+  border-radius: 8px;
+  border: 1px solid var(--pal-border-secondary);
+}
+
+.deployment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--pal-border-secondary);
+}
+
+.deployment-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.deployment-title h3 {
+  margin: 0;
+}
+
+.deployment-date {
+  font-size: 0.875rem;
+  color: var(--pal-text-tertiary);
+  white-space: nowrap;
+}
+
+.deployment-description {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--pal-border-secondary);
+}
+
+.deployment-description p {
+  margin: 0;
+  color: var(--pal-text-secondary);
+  line-height: 1.5;
+}
+
+.deployment-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--pal-border-secondary);
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.detail-label {
+  color: var(--pal-text-tertiary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.detail-value {
+  color: var(--pal-text-primary);
+  font-weight: 500;
+}
+
+.detail-value.monospace {
+  font-family: monospace;
+  background: var(--pal-background-secondary);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.detail-value-with-copy {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.copy-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  font-size: 1rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.copy-button:hover {
+  opacity: 1;
+}
+
+.deployment-actions {
+  display: flex;
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+/* Loading and Error States */
+.loading-container,
+.error-card,
+.connect-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .deployment-history-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .deployment-history-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .deployment-header {
+    flex-direction: column;
+  }
+
+  .deployment-date {
+    text-align: left;
+  }
+
+  .detail-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .deployment-history-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .deployment-actions {
+    flex-direction: column;
+  }
+
+  .deployment-actions button {
+    width: 100%;
+  }
+}
