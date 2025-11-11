@@ -14,8 +14,8 @@ import { useContractRegistry } from "../../hooks/useContractRegistry";
 import { useWallet } from "../../hooks/useWallet";
 import { useNotification } from "../../hooks/useNotification";
 import { useNavigate } from "react-router-dom";
-import type { DeploymentRecord } from "deployment-manager";
-import type { ContractMetadata } from "contract-registry";
+import type { DeploymentRecord } from "deployment_manager";
+import type { ContractMetadata } from "contract_registry";
 import "./DeploymentHistory.css";
 
 export function DeploymentHistory() {
@@ -26,7 +26,9 @@ export function DeploymentHistory() {
   const navigate = useNavigate();
 
   const [deployments, setDeployments] = useState<DeploymentRecord[]>([]);
-  const [contracts, setContracts] = useState<Map<number, ContractMetadata>>(new Map());
+  const [contracts, setContracts] = useState<Map<number, ContractMetadata>>(
+    new Map(),
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,7 +52,10 @@ export function DeploymentHistory() {
       });
 
       const simulation = await result.simulate();
-      const deploymentList = simulation.result as DeploymentRecord[];
+      // Extract the value from the result (it's wrapped in Ok)
+      const resultValue =
+        (simulation.result as any)?.value || simulation.result;
+      const deploymentList = resultValue as DeploymentRecord[];
 
       setDeployments(deploymentList);
 
@@ -80,12 +85,18 @@ export function DeploymentHistory() {
             contract_id: deployment.contract_id,
           });
           const simulation = await result.simulate();
-          const metadata = simulation.result as unknown as ContractMetadata;
+          // Extract the value from the result (it's wrapped in Ok)
+          const resultValue =
+            (simulation.result as any)?.value || simulation.result;
+          const metadata = resultValue as unknown as ContractMetadata;
           contractMap.set(deployment.contract_id, metadata);
         } catch (err) {
-          console.error(`Failed to load contract ${deployment.contract_id}:`, err);
+          console.error(
+            `Failed to load contract ${deployment.contract_id}:`,
+            err,
+          );
         }
-      })
+      }),
     );
 
     setContracts(contractMap);
@@ -196,8 +207,8 @@ export function DeploymentHistory() {
                 No Deployments Yet
               </Heading>
               <Text as="p" size="md">
-                You haven't deployed any contracts yet. Browse the marketplace to
-                get started!
+                You haven't deployed any contracts yet. Browse the marketplace
+                to get started!
               </Text>
               <Button
                 variant="primary"
@@ -214,12 +225,16 @@ export function DeploymentHistory() {
               const contract = contracts.get(deployment.contract_id);
 
               return (
-                <div key={deployment.deployment_id} className="deployment-card-wrapper">
+                <div
+                  key={deployment.deployment_id}
+                  className="deployment-card-wrapper"
+                >
                   <Card>
                     <div className="deployment-header">
                       <div className="deployment-title">
                         <Heading size="sm" as="h3">
-                          {contract?.name || `Contract #${deployment.contract_id}`}
+                          {contract?.name ||
+                            `Contract #${deployment.contract_id}`}
                         </Heading>
                         <Badge variant="success" size="sm">
                           Deployed
@@ -253,15 +268,21 @@ export function DeploymentHistory() {
                           Contract Address
                         </Text>
                         <div className="detail-value-with-copy">
-                          <Text as="span" size="xs" className="detail-value monospace">
-                            {truncateAddress(deployment.deployed_contract_address)}
+                          <Text
+                            as="span"
+                            size="xs"
+                            className="detail-value monospace"
+                          >
+                            {truncateAddress(
+                              deployment.deployed_contract_address,
+                            )}
                           </Text>
                           <button
                             className="copy-button"
                             onClick={() =>
                               copyToClipboard(
                                 deployment.deployed_contract_address,
-                                "Contract address"
+                                "Contract address",
                               )
                             }
                             aria-label="Copy contract address"
@@ -275,7 +296,11 @@ export function DeploymentHistory() {
                         <Text as="span" size="xs" className="detail-label">
                           WASM Hash
                         </Text>
-                        <Text as="span" size="xs" className="detail-value monospace">
+                        <Text
+                          as="span"
+                          size="xs"
+                          className="detail-value monospace"
+                        >
                           {Buffer.from(deployment.wasm_hash)
                             .toString("hex")
                             .substring(0, 16)}
@@ -286,15 +311,29 @@ export function DeploymentHistory() {
 
                     <div className="deployment-actions">
                       {contract && (
-                        <Button
-                          variant="tertiary"
-                          size="sm"
-                          onClick={() =>
-                            navigate(`/marketplace/${deployment.contract_id}`)
-                          }
-                        >
-                          View Contract
-                        </Button>
+                        <>
+                          <Button
+                            variant="tertiary"
+                            size="sm"
+                            onClick={() =>
+                              navigate(`/marketplace/${deployment.contract_id}`)
+                            }
+                          >
+                            View Contract
+                          </Button>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() =>
+                              navigate(
+                                `/deployments/${deployment.deployment_id}/debug`,
+                              )
+                            }
+                          >
+                            <Icon.Tool01 size="sm" />
+                            Debug
+                          </Button>
+                        </>
                       )}
                     </div>
                   </Card>

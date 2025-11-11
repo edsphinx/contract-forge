@@ -15,8 +15,8 @@ import { useReviewSystem } from "../../hooks/useReviewSystem";
 import { useWallet } from "../../hooks/useWallet";
 import { useNotification } from "../../hooks/useNotification";
 import { useNavigate } from "react-router-dom";
-import type { ContractMetadata } from "contract-registry";
-import type { ReviewSummary } from "review-system";
+import type { ContractMetadata } from "contract_registry";
+import type { ReviewSummary } from "review_system";
 import "./Marketplace.css";
 
 export function Marketplace() {
@@ -28,10 +28,14 @@ export function Marketplace() {
   const [contracts, setContracts] = useState<ContractMetadata[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [reviewSummaries, setReviewSummaries] = useState<Map<number, ReviewSummary>>(new Map());
+  const [reviewSummaries, setReviewSummaries] = useState<
+    Map<number, ReviewSummary>
+  >(new Map());
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<number | "all">("all");
-  const [sortBy, setSortBy] = useState<"newest" | "deploys" | "rating">("newest");
+  const [sortBy, setSortBy] = useState<"newest" | "deploys" | "rating">(
+    "newest",
+  );
 
   useEffect(() => {
     if (registry.isReady) {
@@ -53,7 +57,11 @@ export function Marketplace() {
 
       // The result is an AssembledTransaction, we need to simulate it
       const simulation = await result.simulate();
-      const allContracts = simulation.result as ContractMetadata[];
+
+      // Extract the value from the result (it's wrapped in Ok)
+      const resultValue =
+        (simulation.result as any)?.value || simulation.result;
+      const allContracts = resultValue as ContractMetadata[];
 
       setContracts(allContracts);
       console.log(`Loaded ${allContracts.length} contracts`);
@@ -85,12 +93,17 @@ export function Marketplace() {
             contract_id: contract.id,
           });
           const summary = await result.simulate();
-          summaries.set(contract.id, summary.result as ReviewSummary);
+          // Extract the value from the result (it's wrapped in Ok)
+          const summaryValue = (summary.result as any)?.value || summary.result;
+          summaries.set(contract.id, summaryValue as ReviewSummary);
         } catch (err) {
-          console.error(`Failed to load review summary for contract ${contract.id}:`, err);
+          console.error(
+            `Failed to load review summary for contract ${contract.id}:`,
+            err,
+          );
           // Continue loading other summaries even if one fails
         }
-      })
+      }),
     );
 
     setReviewSummaries(summaries);
@@ -111,13 +124,15 @@ export function Marketplace() {
         (contract) =>
           contract.name.toLowerCase().includes(search) ||
           contract.description.toLowerCase().includes(search) ||
-          contract.tags.some((tag) => tag.toLowerCase().includes(search))
+          contract.tags.some((tag) => tag.toLowerCase().includes(search)),
       );
     }
 
     // Apply category filter
     if (categoryFilter !== "all") {
-      filtered = filtered.filter((contract) => contract.category === categoryFilter);
+      filtered = filtered.filter(
+        (contract) => contract.category === categoryFilter,
+      );
     }
 
     // Apply sorting
@@ -167,7 +182,9 @@ export function Marketplace() {
         <div className="marketplace-container">
           <div className="loading-container">
             <Loader size="lg" />
-            <Text as="p" size="md">Loading contracts...</Text>
+            <Text as="p" size="md">
+              Loading contracts...
+            </Text>
           </div>
         </div>
       </Layout.Content>
@@ -183,7 +200,9 @@ export function Marketplace() {
               <Heading size="md" as="h3">
                 Error Loading Contracts
               </Heading>
-              <Text as="p" size="sm">{error}</Text>
+              <Text as="p" size="sm">
+                {error}
+              </Text>
               <Button variant="secondary" size="md" onClick={loadContracts}>
                 Retry
               </Button>
@@ -241,7 +260,9 @@ export function Marketplace() {
                 fieldSize="md"
                 value={String(categoryFilter)}
                 onChange={(e) =>
-                  setCategoryFilter(e.target.value === "all" ? "all" : parseInt(e.target.value))
+                  setCategoryFilter(
+                    e.target.value === "all" ? "all" : parseInt(e.target.value),
+                  )
                 }
               >
                 {categoryOptions.map((option) => (
@@ -254,7 +275,9 @@ export function Marketplace() {
                 id="sort"
                 fieldSize="md"
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as "newest" | "deploys" | "rating")}
+                onChange={(e) =>
+                  setSortBy(e.target.value as "newest" | "deploys" | "rating")
+                }
               >
                 {sortOptions.map((option) => (
                   <option key={option.value} value={option.value}>

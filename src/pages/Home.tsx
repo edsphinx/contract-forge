@@ -1,86 +1,148 @@
 import React from "react";
-import { Code, Layout, Text, Button } from "@stellar/design-system";
+import { Layout, Text, Button, Card, Icon } from "@stellar/design-system";
 import { useNavigate } from "react-router-dom";
+import "./Home.css";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
 
   return (
     <Layout.Content>
-      <Layout.Inset>
-        <Text as="h1" size="xl">
-          Welcome to ContractForge
-        </Text>
-        <Text as="p" size="md">
-          A decentralized marketplace and registry for Stellar Soroban smart contracts.
-          Discover, publish, deploy, and review smart contracts with ease.
-        </Text>
-
-        <Text as="h2" size="lg">
-          Features
-        </Text>
-        <Text as="p" size="md">
-          <strong>📦 Contract Registry:</strong> Browse and discover verified smart contracts
-          published by the community.
-        </Text>
-        <Text as="p" size="md">
-          <strong>🚀 One-Click Deployment:</strong> Deploy any contract from the registry
-          to your account with a simple wizard.
-        </Text>
-        <Text as="p" size="md">
-          <strong>⭐ Reviews & Ratings:</strong> Community-driven reviews help you find
-          trusted, high-quality contracts.
-        </Text>
-        <Text as="p" size="md">
-          <strong>📊 Deployment History:</strong> Track all your deployed contracts
-          and manage them from one place.
-        </Text>
-
-        <Text as="h2" size="lg">
-          Get Started
-        </Text>
-        <Text as="p" size="md">
-          Connect your Stellar wallet to start exploring the marketplace, publish
-          your own contracts, or deploy existing ones.
-        </Text>
-
-        <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
-          <Button
-            variant="primary"
-            size="md"
-            onClick={() => navigate("/marketplace")}
-          >
-            Browse Marketplace
-          </Button>
-          <Button
-            variant="secondary"
-            size="md"
-            onClick={() => navigate("/publish")}
-          >
-            Publish Contract
-          </Button>
+      <div className="home-container">
+        {/* Hero Section */}
+        <div className="hero-section">
+          <div className="hero-content">
+            <Text as="h1" size="xl" className="hero-title">
+              ContractForge
+            </Text>
+            <Text as="p" size="lg" className="hero-subtitle">
+              The NPM for Stellar Smart Contracts
+            </Text>
+            <Text as="p" size="md" className="hero-description">
+              Discover, publish, and deploy verified Soroban contracts with one
+              click
+            </Text>
+            <div className="hero-actions">
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => navigate("/marketplace")}
+              >
+                <Icon.Package size="md" />
+                Explore Marketplace
+              </Button>
+              <Button
+                variant="secondary"
+                size="lg"
+                onClick={() => navigate("/publish")}
+              >
+                <Icon.Upload01 size="md" />
+                Publish Contract
+              </Button>
+            </div>
+          </div>
         </div>
 
-        <Text as="h2" size="lg">
-          For Developers
-        </Text>
-        <Text as="p" size="md">
-          This project includes three smart contracts built with Soroban:
-        </Text>
-        <Text as="p" size="md">
-          • <Code size="md">contract-registry</Code> - Core marketplace registry
-        </Text>
-        <Text as="p" size="md">
-          • <Code size="md">deployment-manager</Code> - Handles one-click deployments
-        </Text>
-        <Text as="p" size="md">
-          • <Code size="md">review-system</Code> - Community reviews and ratings
-        </Text>
-        <Text as="p" size="md">
-          Explore the <Code size="md">&lt;/&gt; Debugger</Code> to interact with
-          contracts directly during development.
-        </Text>
-      </Layout.Inset>
+        {/* Features Grid */}
+        <div className="features-grid">
+          <div className="feature-card">
+            <Card>
+              <div className="feature-icon">
+                <Icon.Package size="xl" />
+              </div>
+              <Text as="h3" size="md" className="feature-title">
+                Contract Registry
+              </Text>
+              <Text as="p" size="sm" className="feature-description">
+                Browse verified smart contracts published by the community
+              </Text>
+            </Card>
+          </div>
+
+          <div className="feature-card">
+            <Card>
+              <div className="feature-icon">
+                <Icon.Rocket01 size="xl" />
+              </div>
+              <Text as="h3" size="md" className="feature-title">
+                One-Click Deploy
+              </Text>
+              <Text as="p" size="sm" className="feature-description">
+                Deploy any contract instantly with our deployment wizard
+              </Text>
+            </Card>
+          </div>
+
+          <div className="feature-card">
+            <Card>
+              <div className="feature-icon">
+                <Icon.Star01 size="xl" />
+              </div>
+              <Text as="h3" size="md" className="feature-title">
+                Reviews & Ratings
+              </Text>
+              <Text as="p" size="sm" className="feature-description">
+                Community-driven reviews for trusted, quality contracts
+              </Text>
+            </Card>
+          </div>
+
+          <div className="feature-card">
+            <Card>
+              <div className="feature-icon">
+                <Icon.ClockFastForward size="xl" />
+              </div>
+              <Text as="h3" size="md" className="feature-title">
+                Deployment History
+              </Text>
+              <Text as="p" size="sm" className="feature-description">
+                Track and manage all your deployed contracts in one place
+              </Text>
+            </Card>
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="stats-section">
+          <div className="stats-card">
+            <Card>
+              <div className="stat-item">
+                <Icon.CheckCircle size="lg" className="stat-icon" />
+                <div className="stat-content">
+                  <Text as="span" size="xs" className="stat-label">
+                    Built with
+                  </Text>
+                  <Text as="span" size="sm" className="stat-value">
+                    Scaffold Stellar
+                  </Text>
+                </div>
+              </div>
+              <div className="stat-item">
+                <Icon.Globe02 size="lg" className="stat-icon" />
+                <div className="stat-content">
+                  <Text as="span" size="xs" className="stat-label">
+                    Deployed on
+                  </Text>
+                  <Text as="span" size="sm" className="stat-value">
+                    Stellar Testnet
+                  </Text>
+                </div>
+              </div>
+              <div className="stat-item">
+                <Icon.Code01 size="lg" className="stat-icon" />
+                <div className="stat-content">
+                  <Text as="span" size="xs" className="stat-label">
+                    Powered by
+                  </Text>
+                  <Text as="span" size="sm" className="stat-value">
+                    Soroban Smart Contracts
+                  </Text>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </div>
     </Layout.Content>
   );
 };

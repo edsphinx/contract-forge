@@ -1,5 +1,5 @@
 import { Badge, Card, Heading, Text } from "@stellar/design-system";
-import type { ContractMetadata } from "contract-registry";
+import type { ContractMetadata } from "contract_registry";
 import "./ContractCard.css";
 
 interface ContractCardProps {
@@ -29,10 +29,16 @@ const categoryNames: Record<number, string> = {
   6: "Other",
 };
 
-export function ContractCard({ contract, onClick, averageRating, totalReviews }: ContractCardProps) {
+export function ContractCard({
+  contract,
+  onClick,
+  averageRating,
+  totalReviews,
+}: ContractCardProps) {
   const shortAuthor = contract.author.substring(0, 8) + "...";
   const categoryName = categoryNames[contract.category as number] || "Other";
-  const categoryColor = categoryColors[contract.category as number] || "default";
+  const categoryColor =
+    categoryColors[contract.category as number] || "default";
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -41,7 +47,7 @@ export function ContractCard({ contract, onClick, averageRating, totalReviews }:
       stars.push(
         <span key={i} className={`star ${i <= starCount ? "filled" : ""}`}>
           ★
-        </span>
+        </span>,
       );
     }
     return stars;
@@ -65,14 +71,16 @@ export function ContractCard({ contract, onClick, averageRating, totalReviews }:
           {contract.description}
         </Text>
 
-        {averageRating !== undefined && totalReviews !== undefined && totalReviews > 0 && (
-          <div className="contract-rating">
-            <div className="stars">{renderStars(averageRating)}</div>
-            <Text as="span" size="xs" className="rating-text">
-              {(averageRating / 100).toFixed(1)} ({totalReviews})
-            </Text>
-          </div>
-        )}
+        {averageRating !== undefined &&
+          totalReviews !== undefined &&
+          totalReviews > 0 && (
+            <div className="contract-rating">
+              <div className="stars">{renderStars(averageRating)}</div>
+              <Text as="span" size="xs" className="rating-text">
+                {(averageRating / 100).toFixed(1)} ({totalReviews})
+              </Text>
+            </div>
+          )}
 
         <div className="contract-metadata">
           <Badge variant={categoryColor as any} size="sm">

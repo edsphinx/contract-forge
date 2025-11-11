@@ -3,7 +3,7 @@ import { Layout, Code, Card, Button, Input } from "@stellar/design-system";
 import { Client } from "@stellar/stellar-sdk/contract";
 import { ContractForm } from "../debug/components/ContractForm.tsx";
 import { Box } from "../components/layout/Box.tsx";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams, useLocation } from "react-router-dom";
 import { useContracts } from "../debug/hooks/useContracts.ts";
 import RenderContractMetadata from "../debug/components/RenderContractMetadata.tsx";
 
@@ -12,6 +12,8 @@ const Debugger: React.FC = () => {
   const contractMap = data?.loadedContracts ?? {};
   const failedContracts = data?.failed ?? {};
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as { from?: string; contractId?: string } | null;
 
   const [selectedContract, setSelectedContract] = useState<string>("");
   const [isDetailExpanded, setIsDetailExpanded] = useState(false);
@@ -86,6 +88,17 @@ const Debugger: React.FC = () => {
     <Layout.Content>
       {/* Top Info Box */}
       <Layout.Inset>
+        {state?.from === "marketplace" && state?.contractId && (
+          <div style={{ marginBottom: "1rem" }}>
+            <Button
+              variant="tertiary"
+              size="sm"
+              onClick={() => navigate(`/marketplace/${state.contractId}`)}
+            >
+              ← Back to Marketplace
+            </Button>
+          </div>
+        )}
         <h2>Debug Contracts</h2>
         <p>
           You can debug & interact with your deployed contracts here. Check{" "}

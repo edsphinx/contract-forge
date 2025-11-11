@@ -1,20 +1,26 @@
 <div align="center">
   <img src="public/logo-with-text.jpg" alt="ContractForge Logo" width="600"/>
 
-  # ContractForge
+# ContractForge
 
-  **A Decentralized Marketplace and Registry for Stellar Smart Contracts.**
+**A Decentralized Marketplace and Registry for Stellar Smart Contracts.**
 
-  [![Stellar](https://img.shields.io/badge/Stellar-Soroban-7D00FF?style=flat-square)](https://stellar.org)
-  [![Hackathon](https://img.shields.io/badge/Scaffold_Stellar-Hackathon-00D8FF?style=flat-square)](https://dorahacks.io/hackathon/scaffoldstellar/detail)
+[![Stellar](https://img.shields.io/badge/Stellar-Soroban-7D00FF?style=flat-square)](https://stellar.org)
+[![Hackathon](https://img.shields.io/badge/Scaffold_Stellar-Hackathon-00D8FF?style=flat-square)](https://dorahacks.io/hackathon/scaffoldstellar/detail)
 
 </div>
 
 This project is a submission for the **Scaffold Stellar Hackathon** on DoraHacks.
 
-* **Hackathon Page:** [https://dorahacks.io/hackathon/scaffoldstellar/detail](https://dorahacks.io/hackathon/scaffoldstellar/detail)
-* **Live Demo URL:** [Link to your deployed Vercel/Netlify/Cloudflare Pages]
-* **Video Demo:** [Link to your YouTube/Loom video]
+- **Hackathon Page:** [https://dorahacks.io/hackathon/scaffoldstellar/detail](https://dorahacks.io/hackathon/scaffoldstellar/detail)
+- **Live Demo URL:** [https://contract-forge-stellar.vercel.app](https://contract-forge-stellar.vercel.app)
+- **Video Demo:** [Watch on YouTube](https://youtu.be/AGdY2r_B2O0)
+
+## Video Demo
+
+[![ContractForge Demo](https://img.youtube.com/vi/AGdY2r_B2O0/maxresdefault.jpg)](https://youtu.be/AGdY2r_B2O0)
+
+_Click the image above to watch the full demo on YouTube_
 
 ---
 
@@ -22,9 +28,9 @@ This project is a submission for the **Scaffold Stellar Hackathon** on DoraHacks
 
 The Stellar Soroban ecosystem is powerful but new. As developers build complex dApps, they face significant challenges:
 
-* **Code Duplication:** Developers constantly reinvent the wheel, writing boilerplate code for common standards (like tokens, DAOs, or escrows) that have been built before.
-* **Discovery:** There is no central, trusted place to find, browse, and audit existing Soroban smart contracts.
-* **Trust & Security:** It is difficult for a developer to know if a third-party contract is secure, audited, or adheres to best practices.
+- **Code Duplication:** Developers constantly reinvent the wheel, writing boilerplate code for common standards (like tokens, DAOs, or escrows) that have been built before.
+- **Discovery:** There is no central, trusted place to find, browse, and audit existing Soroban smart contracts.
+- **Trust & Security:** It is difficult for a developer to know if a third-party contract is secure, audited, or adheres to best practices.
 
 This friction slows down innovation and increases security risks for the entire ecosystem.
 
@@ -36,10 +42,10 @@ It provides a central hub where developers can **publish**, **discover**, **veri
 
 ### Core Features
 
-* **On-Chain Contract Registry:** A searchable, filterable database of Soroban smart contracts. Each entry includes detailed metadata, versioning, documentation, and a link to the source code.
-* **One-Click Deployment:** A seamless deployment wizard that allows any developer to select a contract from the registry, configure its initialization parameters, and deploy their own instance of it directly to the network.
-* **Community Rating & Review System:** A decentralized system for users and auditors to rate, review, and comment on contracts, building a social layer of trust and quality.
-* **Verification Badges:** A framework for marking contracts as "Verified" (source code matches on-chain Wasm) or "Audited" (linked to a formal security audit).
+- **On-Chain Contract Registry:** A searchable, filterable database of Soroban smart contracts. Each entry includes detailed metadata, versioning, documentation, and a link to the source code.
+- **One-Click Deployment:** A seamless deployment wizard that allows any developer to select a contract from the registry, configure its initialization parameters, and deploy their own instance of it directly to the network.
+- **Community Rating & Review System:** A decentralized system for users and auditors to rate, review, and comment on contracts, building a social layer of trust and quality.
+- **Verification Badges:** A framework for marking contracts as "Verified" (source code matches on-chain Wasm) or "Audited" (linked to a formal security audit).
 
 ```mermaid
 graph TD
@@ -65,16 +71,16 @@ graph TD
 
     U -- "Browse / Search" --> UI
     U -- "Action (Publish, Deploy, Rate)" --> UI
-    
+
     UI -- "Request Signature" --> WK
     WK -- "Signed Transaction" --> UI
-    
+
     UI -- "Uses" --> TSC
-    
+
     TSC -- "publishContract()" --> CR
     TSC -- "deployFromRegistry()" --> DM
     TSC -- "submitReview()" --> RS
-    
+
     CR -- "Writes/Reads Metadata" --> SN
     DM -- "Deploys New Wasm" --> SN
     RS -- "Writes/Reads Reviews" --> SN
@@ -82,27 +88,27 @@ graph TD
 
 ## 3. Showcasing the Power of Scaffold Stellar
 
-ContractForge is not just *built with* Scaffold Stellar; it is a *meta-tool* designed to amplify the framework's core mission of accelerating developer experience (DevEx).
+ContractForge is not just _built with_ Scaffold Stellar; it is a _meta-tool_ designed to amplify the framework's core mission of accelerating developer experience (DevEx).
 
 This project was chosen specifically to demonstrate a deep understanding of the Scaffold Stellar architecture and its most powerful, unique features:
 
 1.  **Built on the Registry Concept:** The entire premise of ContractForge is a user-interface and governance layer built on top of the `stellar-scaffold-cli`'s built-in **Contract Registry** concept. We showcase how this feature can be used to create a powerful ecosystem tool.
 2.  **Demonstrates End-to-End Workflow:** We provide a perfect, real-world demonstration of the entire framework workflow:
-    * A developer **publishes** a contract (using our UI, which wraps the `registry publish` logic).
-    * A consumer **deploys** that contract (using our `DeploymentManager` contract).
-    * The consumer's frontend instantly benefits from the **auto-generated TypeScript client**, a key feature of Scaffold Stellar.
+    - A developer **publishes** a contract (using our UI, which wraps the `registry publish` logic).
+    - A consumer **deploys** that contract (using our `DeploymentManager` contract).
+    - The consumer's frontend instantly benefits from the **auto-generated TypeScript client**, a key feature of Scaffold Stellar.
 3.  **Highlights Developer Tooling:** This project directly serves the same audience as the Scaffold Stellar team: developers. By building a tool that helps other developers build faster and safer, we align perfectly with the hackathon's "Open Innovation" theme.
 
 ## 4. Hackathon Requirements Checklist
 
 We have successfully met all mandatory submission requirements:
 
-* [x] **Deployed Smart Contract:** The platform runs on a multi-contract architecture using Rust/Wasm on the Stellar Testnet. This includes:
-    * `ContractRegistry`: Manages all metadata, categories, and publishing logic.
-    * `DeploymentManager`: Handles the on-chain logic for deploying new contract instances from the registry.
-    * `ReviewSystem`: Manages ratings, reviews, and developer comments.
-* [x] **Functional Frontend:** A complete React + TypeScript + Vite frontend (bootstrapped with Scaffold Stellar) provides a full user experience for browsing, searching, and deploying contracts.
-* [x] **Stellar Wallet Kit Integration:** The frontend is fully integrated with the Stellar Wallet Kit. All on-chain actions (publishing, deploying, rating, reviewing) are authenticated and signed by the user's wallet.
+- [x] **Deployed Smart Contract:** The platform runs on a multi-contract architecture using Rust/Wasm on the Stellar Testnet. This includes:
+  - `ContractRegistry`: Manages all metadata, categories, and publishing logic.
+  - `DeploymentManager`: Handles the on-chain logic for deploying new contract instances from the registry.
+  - `ReviewSystem`: Manages ratings, reviews, and developer comments.
+- [x] **Functional Frontend:** A complete React + TypeScript + Vite frontend (bootstrapped with Scaffold Stellar) provides a full user experience for browsing, searching, and deploying contracts.
+- [x] **Stellar Wallet Kit Integration:** The frontend is fully integrated with the Stellar Wallet Kit. All on-chain actions (publishing, deploying, rating, reviewing) are authenticated and signed by the user's wallet.
 
 ## 5. Technical Architecture
 
@@ -112,39 +118,81 @@ ContractForge uses a robust, decoupled architecture. The React frontend communic
 
 ### Core Contracts
 
-* **`ContractRegistry`**: The source of truth for all contract metadata.
-* **`DeploymentManager`**: A "factory" contract that deploys new instances of registered contracts.
-* **`ReviewSystem`**: A dedicated contract for handling user-generated content (ratings/reviews) to keep the main registry clean.
+- **`ContractRegistry`**: The source of truth for all contract metadata.
+- **`DeploymentManager`**: A "factory" contract that deploys new instances of registered contracts.
+- **`ReviewSystem`**: A dedicated contract for handling user-generated content (ratings/reviews) to keep the main registry clean.
 
-## 6. Running the Project Locally
+## 6. Live Deployment on Stellar Testnet
+
+ContractForge is currently deployed and operational on **Stellar Testnet**. You can interact with the live contracts using the addresses below:
+
+### Deployed Contract Addresses
+
+| Contract              | Address                                                    | Stellar Expert                                                                                                                  |
+| --------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **ContractRegistry**  | `CAPTDA3MLS7UEL64BK4CG4BNN7L4QSE7POTZ6W2PKLEJZCHWRHHAENSQ` | [View on Explorer →](https://stellar.expert/explorer/testnet/contract/CAPTDA3MLS7UEL64BK4CG4BNN7L4QSE7POTZ6W2PKLEJZCHWRHHAENSQ) |
+| **DeploymentManager** | `CDPEFPPNJTF6DHRWQVHB7OB22GAQIKQVJOFOTOLLOEPHXBXEW3ZNPK5N` | [View on Explorer →](https://stellar.expert/explorer/testnet/contract/CDPEFPPNJTF6DHRWQVHB7OB22GAQIKQVJOFOTOLLOEPHXBXEW3ZNPK5N) |
+| **ReviewSystem**      | `CC3RZKTDLNYCXCALT6CA4IMGZLAOQE7ZABXGVRKFRUPUNNMKYRL7OMFW` | [View on Explorer →](https://stellar.expert/explorer/testnet/contract/CC3RZKTDLNYCXCALT6CA4IMGZLAOQE7ZABXGVRKFRUPUNNMKYRL7OMFW) |
+
+### Network Configuration
+
+```toml
+Network: Stellar Testnet
+RPC URL: https://soroban-testnet.stellar.org
+Network Passphrase: "Test SDF Network ; September 2015"
+```
+
+### Testing the Live Deployment
+
+To interact with the deployed contracts:
+
+1. **Configure Freighter Wallet** for Testnet:
+   - Install [Freighter](https://www.freighter.app/)
+   - Switch to "Testnet" network
+   - Get test XLM from the [Stellar Testnet Friendbot](https://laboratory.stellar.org/#account-creator?network=test)
+
+2. **Access the Frontend**:
+   - Clone this repository and follow the setup instructions below
+   - Or visit our hosted demo (see "Live Demo URL" at the top)
+
+3. **Try Core Features**:
+   - Browse published contracts in the registry
+   - Deploy a contract instance from the marketplace
+   - Submit reviews and ratings for contracts
+
+## 7. Running the Project Locally
 
 ### Prerequisites
 
-* Rust
-* Node.js (v18+) & pnpm
-* Stellar CLI
-* Scaffold Stellar CLI (`cargo install --locked stellar-scaffold-cli`)
-* Docker
+- Rust
+- Node.js (v18+) & pnpm
+- Stellar CLI
+- Scaffold Stellar CLI (`cargo install --locked stellar-scaffold-cli`)
+- Docker
 
 ### Installation
 
 1.  **Clone the repository:**
+
     ```bash
     git clone [your-repo-url]
     cd [your-repo-name]
     ```
 
 2.  **Install dependencies:**
+
     ```bash
     pnpm install
     ```
 
 3.  **Start the local network:**
+
     ```bash
     pnpm start:local_network
     ```
 
 4.  **Deploy contracts** (in a new terminal):
+
     ```bash
     pnpm deploy:local
     ```
@@ -156,11 +204,11 @@ ContractForge uses a robust, decoupled architecture. The React frontend communic
 
 The application will be available at `http://localhost:5173`.
 
-## 7. Future Roadmap
+## 8. Future Roadmap
 
 This hackathon project is the foundation for a critical piece of public infrastructure for the Stellar ecosystem.
 
-* **GitHub/GitLab Integration:** Automatically pull source code from repositories, run verification checks, and publish new versions.
-* **Formal Auditor Integration:** Create a special role for auditors to attach formal audit reports and "Audited" badges.
-* **Gas & Deployment Cost Estimation:** Provide users with an estimated cost before they deploy a contract.
-* **Contract Bundles:** Allow developers to publish "bundles" of contracts that work together (e.g., a "DeFi Starter Pack" with a Token, a Pool, and a Router).
+- **GitHub/GitLab Integration:** Automatically pull source code from repositories, run verification checks, and publish new versions.
+- **Formal Auditor Integration:** Create a special role for auditors to attach formal audit reports and "Audited" badges.
+- **Gas & Deployment Cost Estimation:** Provide users with an estimated cost before they deploy a contract.
+- **Contract Bundles:** Allow developers to publish "bundles" of contracts that work together (e.g., a "DeFi Starter Pack" with a Token, a Pool, and a Router).

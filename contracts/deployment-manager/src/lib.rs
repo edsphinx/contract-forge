@@ -1,6 +1,6 @@
 #![no_std]
 
-use soroban_sdk::{contract, contractevent, contractimpl, Address, BytesN, Env, Vec};
+use soroban_sdk::{contract, contractevent, contractimpl, Address, BytesN, Env, Val, Vec};
 
 mod storage;
 mod types;
@@ -18,31 +18,44 @@ pub struct DeploymentManager;
 
 #[contractimpl]
 impl DeploymentManager {
-    /// Deploy a contract from the registry (simplified for MVP)
+    /// Deploy a contract with an admin address constructor parameter
+    /// This is a convenience method for the common pattern of contracts with admin initialization
+    pub fn deploy_with_admin(
+        env: Env,
+        contract_id: u32,
+        deployer: Address,
+        wasm_hash: BytesN<32>,
+        salt: BytesN<32>,
+        admin: Address,
+    ) -> Result<u32, Error> {
+        // Convert admin address to Val and create Vec
+        let mut init_args = Vec::new(&env);
+        init_args.push_back(admin.to_val());
+
+        // Call the main deploy function
+        Self::deploy_from_wasm(env, contract_id, deployer, wasm_hash, salt, init_args)
+    }
+
+    /// Deploy a contract from the registry
+    /// This deploys a new contract instance on-chain from the WASM hash
+    /// init_args: Constructor arguments for the contract (empty vec if no constructor)
     pub fn deploy_from_wasm(
         env: Env,
         contract_id: u32,
         deployer: Address,
         wasm_hash: BytesN<32>,
         salt: BytesN<32>,
+        init_args: Vec<Val>,
     ) -> Result<u32, Error> {
         // Require authentication from deployer
         deployer.require_auth();
 
-        // In a full implementation, this would:
-        // 1. Call ContractRegistry to get metadata
-        // 2. Use env.deployer() to deploy the WASM
-        // For MVP, we simulate deployment and track the record
-
-        // Deploy the contract
-        // Note: In production, this would use:
-        // let deployed_address = env
-        //     .deployer()
-        //     .with_address(deployer.clone(), salt.clone())
-        //     .deploy(wasm_hash);
-
-        // For MVP, we'll create a simulated deployed address
-        let deployed_address = deployer.clone();
+        // Deploy the contract using the Soroban deployer
+        // This creates a new contract instance from the WASM hash with constructor args
+        let deployed_address = env
+            .deployer()
+            .with_address(deployer.clone(), salt.clone())
+            .deploy_v2(wasm_hash.clone(), init_args);
 
         // Generate deployment ID
         let deployment_id = storage::increment_counter(&env);

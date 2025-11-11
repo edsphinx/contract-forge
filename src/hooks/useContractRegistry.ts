@@ -1,21 +1,22 @@
 import { useMemo } from "react";
-import { Client as ContractRegistryClient } from "contract-registry";
+import { Client as ContractRegistryClient } from "contract_registry";
 import { useWallet } from "./useWallet";
 
 export function useContractRegistry() {
   const wallet = useWallet();
 
   const client = useMemo(() => {
-    if (!wallet.address) return null;
+    if (!wallet.address || !wallet.signTransaction) return null;
 
     return new ContractRegistryClient({
       publicKey: wallet.address,
-      // These will be set after contract deployment
-      contractId: process.env.VITE_CONTRACT_REGISTRY_ID || "",
-      networkPassphrase: wallet.networkPassphrase || "Standalone Network ; February 2017",
-      rpcUrl: "http://localhost:8000/rpc",
+      contractId: import.meta.env.VITE_CONTRACT_REGISTRY_ID as string,
+      networkPassphrase: import.meta.env
+        .PUBLIC_STELLAR_NETWORK_PASSPHRASE as string,
+      rpcUrl: import.meta.env.PUBLIC_STELLAR_RPC_URL as string,
+      signTransaction: wallet.signTransaction,
     });
-  }, [wallet.address, wallet.networkPassphrase]);
+  }, [wallet.address, wallet.signTransaction]);
 
   return {
     client,

@@ -9,6 +9,8 @@ import { PublishContract } from "./pages/marketplace/PublishContract";
 import { ContractDetails } from "./pages/marketplace/ContractDetails";
 import { DeployWizard } from "./pages/marketplace/DeployWizard";
 import { DeploymentHistory } from "./pages/marketplace/DeploymentHistory";
+import { MarketplaceDebugger } from "./pages/marketplace/MarketplaceDebugger";
+import { DeployedContractDebugger } from "./pages/marketplace/DeployedContractDebugger";
 
 const AppLayout: React.FC = () => (
   <main>
@@ -25,11 +27,7 @@ const AppLayout: React.FC = () => (
               }}
             >
               {({ isActive }) => (
-                <Button
-                  variant="tertiary"
-                  size="md"
-                  disabled={isActive}
-                >
+                <Button variant="tertiary" size="md" disabled={isActive}>
                   <Icon.Home01 size="md" />
                   Home
                 </Button>
@@ -42,11 +40,7 @@ const AppLayout: React.FC = () => (
               }}
             >
               {({ isActive }) => (
-                <Button
-                  variant="tertiary"
-                  size="md"
-                  disabled={isActive}
-                >
+                <Button variant="tertiary" size="md" disabled={isActive}>
                   <Icon.Package size="md" />
                   Marketplace
                 </Button>
@@ -59,11 +53,7 @@ const AppLayout: React.FC = () => (
               }}
             >
               {({ isActive }) => (
-                <Button
-                  variant="tertiary"
-                  size="md"
-                  disabled={isActive}
-                >
+                <Button variant="tertiary" size="md" disabled={isActive}>
                   <Icon.Rocket01 size="md" />
                   Deployments
                 </Button>
@@ -116,10 +106,21 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/marketplace/:contractId" element={<ContractDetails />} />
-        <Route path="/marketplace/:contractId/deploy" element={<DeployWizard />} />
+        <Route
+          path="/marketplace/:contractId/deploy"
+          element={<DeployWizard />}
+        />
         <Route path="/publish" element={<PublishContract />} />
         <Route path="/deployments" element={<DeploymentHistory />} />
+        <Route
+          path="/deployments/:deploymentId/debug"
+          element={<DeployedContractDebugger />}
+        />
         <Route path="/debug" element={<Debugger />} />
+        <Route
+          path="/debug/marketplace/:contractId"
+          element={<MarketplaceDebugger />}
+        />
         <Route path="/debug/:contractName" element={<Debugger />} />
       </Route>
     </Routes>

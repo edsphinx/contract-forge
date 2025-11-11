@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Text } from "@stellar/design-system";
-import { Review } from "review-system";
+import { Review } from "review_system";
 import { useReviewSystem } from "../../hooks/useReviewSystem";
 import { useWallet } from "../../hooks/useWallet";
 import { useNotification } from "../../hooks/useNotification";
@@ -37,7 +37,7 @@ export function ReviewList({ contractId, onRefresh }: ReviewListProps) {
       });
 
       const result = await tx.simulate();
-      setReviews(result.result as Review[]);
+      setReviews(result.result);
     } catch (error) {
       console.error("Error loading reviews:", error);
       setReviews([]);
@@ -84,7 +84,7 @@ export function ReviewList({ contractId, onRefresh }: ReviewListProps) {
       stars.push(
         <span key={i} className={`star ${i <= rating ? "filled" : ""}`}>
           ★
-        </span>
+        </span>,
       );
     }
     return stars;
@@ -106,7 +106,9 @@ export function ReviewList({ contractId, onRefresh }: ReviewListProps) {
   if (isLoading) {
     return (
       <div className="review-list-loading">
-        <Text as="p" size="md">Loading reviews...</Text>
+        <Text as="p" size="md">
+          Loading reviews...
+        </Text>
       </div>
     );
   }
@@ -114,7 +116,9 @@ export function ReviewList({ contractId, onRefresh }: ReviewListProps) {
   if (reviews.length === 0) {
     return (
       <div className="review-list-empty">
-        <Text as="p" size="md">No reviews yet. Be the first to review this contract!</Text>
+        <Text as="p" size="md">
+          No reviews yet. Be the first to review this contract!
+        </Text>
       </div>
     );
   }
@@ -137,7 +141,9 @@ export function ReviewList({ contractId, onRefresh }: ReviewListProps) {
             </div>
 
             <div className="review-content">
-              <Text as="p" size="md">{review.comment}</Text>
+              <Text as="p" size="md">
+                {review.comment}
+              </Text>
             </div>
 
             <div className="review-footer">

@@ -1,21 +1,22 @@
 import { useMemo } from "react";
-import { Client as DeploymentManagerClient } from "deployment-manager";
+import { Client as DeploymentManagerClient } from "deployment_manager";
 import { useWallet } from "./useWallet";
 
 export function useDeploymentManager() {
   const wallet = useWallet();
 
   const client = useMemo(() => {
-    if (!wallet.address) return null;
+    if (!wallet.address || !wallet.signTransaction) return null;
 
     return new DeploymentManagerClient({
       publicKey: wallet.address,
-      // These will be set after contract deployment
-      contractId: process.env.VITE_DEPLOYMENT_MANAGER_ID || "",
-      networkPassphrase: wallet.networkPassphrase || "Standalone Network ; February 2017",
-      rpcUrl: "http://localhost:8000/rpc",
+      contractId: import.meta.env.VITE_DEPLOYMENT_MANAGER_ID as string,
+      networkPassphrase: import.meta.env
+        .PUBLIC_STELLAR_NETWORK_PASSPHRASE as string,
+      rpcUrl: import.meta.env.PUBLIC_STELLAR_RPC_URL as string,
+      signTransaction: wallet.signTransaction,
     });
-  }, [wallet.address, wallet.networkPassphrase]);
+  }, [wallet.address, wallet.signTransaction]);
 
   return {
     client,

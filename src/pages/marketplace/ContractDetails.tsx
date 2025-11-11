@@ -14,8 +14,8 @@ import { useContractRegistry } from "../../hooks/useContractRegistry";
 import { useReviewSystem } from "../../hooks/useReviewSystem";
 import { useWallet } from "../../hooks/useWallet";
 import { useNotification } from "../../hooks/useNotification";
-import type { ContractMetadata } from "contract-registry";
-import type { ReviewSummary } from "review-system";
+import type { ContractMetadata } from "contract_registry";
+import type { ReviewSummary } from "review_system";
 import { ReviewForm } from "../../components/marketplace/ReviewForm";
 import { ReviewList } from "../../components/marketplace/ReviewList";
 import "./ContractDetails.css";
@@ -51,7 +51,9 @@ export function ContractDetails() {
   const [contract, setContract] = useState<ContractMetadata | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [reviewSummary, setReviewSummary] = useState<ReviewSummary | null>(null);
+  const [reviewSummary, setReviewSummary] = useState<ReviewSummary | null>(
+    null,
+  );
   const [reviewRefresh, setReviewRefresh] = useState(0);
 
   useEffect(() => {
@@ -81,10 +83,13 @@ export function ContractDetails() {
 
       const simulation = await result.simulate();
 
-      // Handle the result (it might be wrapped in Ok/Err)
+      // Handle the result (it's wrapped in Ok with a value property)
       let contractData: ContractMetadata;
-      if (simulation.result && typeof simulation.result === 'object') {
-        contractData = simulation.result as unknown as ContractMetadata;
+      if (simulation.result && typeof simulation.result === "object") {
+        // Check if it's wrapped in Ok/Err with a value property
+        const resultValue =
+          (simulation.result as any).value || simulation.result;
+        contractData = resultValue as unknown as ContractMetadata;
       } else {
         throw new Error("Invalid contract data");
       }
@@ -109,7 +114,7 @@ export function ContractDetails() {
       });
 
       const summary = await result.simulate();
-      setReviewSummary(summary.result as ReviewSummary);
+      setReviewSummary(summary.result);
     } catch (err) {
       console.error("Failed to load review summary:", err);
       setReviewSummary(null);
@@ -117,22 +122,58 @@ export function ContractDetails() {
   };
 
   const handleReviewSubmitted = () => {
-    setReviewRefresh(prev => prev + 1);
+    setReviewRefresh((prev) => prev + 1);
   };
 
   const handleDeploy = () => {
+    console.log(
+      "Deploy button clicked, navigating to:",
+      `/marketplace/${contractId}/deploy`,
+    );
     navigate(`/marketplace/${contractId}/deploy`);
   };
 
   const handleSourceCode = () => {
+    console.log("Source code button clicked, contract:", contract);
+    console.log("source_url:", contract?.source_url);
     if (contract?.source_url) {
       window.open(contract.source_url, "_blank");
+    } else {
+      addNotification("Source URL not available", "error");
     }
   };
 
   const handleDocumentation = () => {
+    console.log("Documentation button clicked");
     if (contract?.documentation_url) {
       window.open(contract.documentation_url, "_blank");
+    } else {
+      addNotification("Documentation URL not available", "error");
+    }
+  };
+
+  const handleVerify = async () => {
+    if (!wallet.address || !registry.client || !contractId) {
+      addNotification("Please ensure wallet is connected", "error");
+      return;
+    }
+
+    try {
+      const tx = await registry.client.verify_contract({
+        contract_id: parseInt(contractId),
+        auditor: wallet.address,
+      });
+
+      await tx.signAndSend();
+
+      addNotification("Contract verified successfully!", "success");
+
+      // Reload contract to get updated verified status
+      loadContract();
+    } catch (err) {
+      console.error("Verification failed:", err);
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
+      addNotification(`Verification failed: ${errorMessage}`, "error");
     }
   };
 
@@ -161,7 +202,9 @@ export function ContractDetails() {
         <div className="details-container">
           <div className="loading-container">
             <Loader size="lg" />
-            <Text as="p" size="md">Loading contract details...</Text>
+            <Text as="p" size="md">
+              Loading contract details...
+            </Text>
           </div>
         </div>
       </Layout.Content>
@@ -195,9 +238,35 @@ export function ContractDetails() {
   }
 
   const categoryName = categoryNames[contract.category as number] || "Other";
-  const categoryColor = categoryColors[contract.category as number] || "default";
-  const publishedDate = new Date(Number(contract.published_at) * 1000).toLocaleDateString();
-  const updatedDate = new Date(Number(contract.updated_at) * 1000).toLocaleDateString();
+  const categoryColor =
+    categoryColors[contract.category as number] || "default";
+
+  // Safely convert BigInt or number to timestamp
+  const safeTimestamp = (value: any): number => {
+    if (!value) return 0;
+    const num = typeof value === "bigint" ? Number(value) : Number(value);
+    return isNaN(num) ? 0 : num;
+  };
+
+  const publishedTimestamp = safeTimestamp(contract.published_at);
+  const updatedTimestamp = safeTimestamp(contract.updated_at);
+
+  const publishedDate =
+    publishedTimestamp > 0
+      ? new Date(publishedTimestamp * 1000).toLocaleDateString()
+      : "Unknown";
+  const updatedDate =
+    updatedTimestamp > 0
+      ? new Date(updatedTimestamp * 1000).toLocaleDateString()
+      : "Unknown";
+
+  const totalDeployments = safeTimestamp(contract.total_deployments);
+
+  // Safely handle string fields that might be empty or undefined
+  const contractName = contract.name || "Unnamed Contract";
+  const contractVersion = contract.version || "0.0.0";
+  const contractLicense = contract.license || "Unknown";
+  const contractNumericId = contract.id ? safeTimestamp(contract.id) : 0;
 
   return (
     <Layout.Content>
@@ -219,7 +288,7 @@ export function ContractDetails() {
               <div className="contract-header">
                 <div className="title-section">
                   <Heading size="xl" as="h1">
-                    {contract.name}
+                    {contractName}
                   </Heading>
                   <div className="badges">
                     <Badge variant={categoryColor as any} size="md">
@@ -246,6 +315,12 @@ export function ContractDetails() {
                     <Icon.Code01 size="md" />
                     View Source
                   </Button>
+                  {!contract.verified && (
+                    <Button variant="tertiary" size="md" onClick={handleVerify}>
+                      <Icon.CheckCircle size="md" />
+                      Verify Contract
+                    </Button>
+                  )}
                 </div>
               </div>
 
@@ -262,7 +337,7 @@ export function ContractDetails() {
                       Version
                     </Text>
                     <Text as="span" size="md" className="metadata-value">
-                      {contract.version}
+                      {contractVersion}
                     </Text>
                   </div>
 
@@ -271,7 +346,7 @@ export function ContractDetails() {
                       License
                     </Text>
                     <Text as="span" size="md" className="metadata-value">
-                      {contract.license}
+                      {contractLicense}
                     </Text>
                   </div>
 
@@ -280,7 +355,7 @@ export function ContractDetails() {
                       Deployments
                     </Text>
                     <Text as="span" size="md" className="metadata-value">
-                      {Number(contract.total_deployments)}
+                      {totalDeployments}
                     </Text>
                   </div>
 
@@ -307,7 +382,7 @@ export function ContractDetails() {
                       Contract ID
                     </Text>
                     <Text as="span" size="md" className="metadata-value">
-                      #{contract.id}
+                      #{contractNumericId}
                     </Text>
                   </div>
                 </div>
@@ -356,7 +431,10 @@ export function ContractDetails() {
                         ))}
                       </div>
                       <Text as="span" size="sm" className="review-count">
-                        {reviewSummary.total_reviews} {reviewSummary.total_reviews === 1 ? 'review' : 'reviews'}
+                        {reviewSummary.total_reviews}{" "}
+                        {reviewSummary.total_reviews === 1
+                          ? "review"
+                          : "reviews"}
                       </Text>
                     </div>
                   </div>
@@ -399,7 +477,11 @@ export function ContractDetails() {
                     WASM Hash
                   </Text>
                   <Text as="p" size="xs" className="hash-value">
-                    {Buffer.from(contract.wasm_hash).toString("hex").substring(0, 16)}...
+                    {contract.wasm_hash
+                      ? Buffer.from(contract.wasm_hash)
+                          .toString("hex")
+                          .substring(0, 16) + "..."
+                      : "N/A"}
                   </Text>
                 </div>
               </div>

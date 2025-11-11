@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Code, Input, Text } from "@stellar/design-system";
 import { useWallet } from "../hooks/useWallet";
-import game from "../contracts/guess_the_number";
+// import game from "../contracts/guess_the_number";
 import { Box } from "../components/layout/Box";
 
 export const GuessTheNumber = () => {
@@ -19,19 +19,17 @@ export const GuessTheNumber = () => {
 
   const submitGuess = async () => {
     if (!theGuess || !address) return;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const { result } = await game.guess({
-      a_number: BigInt(theGuess),
-      guesser: address,
-    });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    if (result.isErr()) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      console.error(result.unwrapErr());
-    } else {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      setGuessedIt(result.unwrap());
-    }
+    // Disabled: guess_the_number contract not configured
+    // const { result } = await game.guess({
+    //   a_number: BigInt(theGuess),
+    //   guesser: address,
+    // });
+    // if (result.isErr()) {
+    //   console.error(result.unwrapErr());
+    // } else {
+    //   setGuessedIt(result.unwrap());
+    // }
+    console.log("GuessTheNumber component disabled - contract not configured");
   };
 
   return (

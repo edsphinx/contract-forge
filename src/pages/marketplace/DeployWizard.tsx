@@ -15,7 +15,7 @@ import { useContractRegistry } from "../../hooks/useContractRegistry";
 import { useDeploymentManager } from "../../hooks/useDeploymentManager";
 import { useWallet } from "../../hooks/useWallet";
 import { useNotification } from "../../hooks/useNotification";
-import type { ContractMetadata } from "contract-registry";
+import type { ContractMetadata } from "contract_registry";
 import "./DeployWizard.css";
 
 enum DeploymentStep {
@@ -41,11 +41,10 @@ export function DeployWizard() {
   const [deploymentId, setDeploymentId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Generate random salt
+    // Generate random salt (32 bytes = 64 hex characters)
     const randomSalt = Array.from(crypto.getRandomValues(new Uint8Array(32)))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('')
-      .substring(0, 32);
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
     setSalt(randomSalt);
 
     if (registry.isReady && contractId) {
@@ -68,8 +67,11 @@ export function DeployWizard() {
 
       const simulation = await result.simulate();
       let contractData: ContractMetadata;
-      if (simulation.result && typeof simulation.result === 'object') {
-        contractData = simulation.result as unknown as ContractMetadata;
+      if (simulation.result && typeof simulation.result === "object") {
+        // Check if it's wrapped in Ok/Err with a value property
+        const resultValue =
+          (simulation.result as any).value || simulation.result;
+        contractData = resultValue as unknown as ContractMetadata;
       } else {
         throw new Error("Invalid contract data");
       }
@@ -85,30 +87,81 @@ export function DeployWizard() {
     }
   };
 
+  // Constructor params are automatically handled:
+  // We pass the connected wallet address as the first argument
+  // This works for most common contract patterns (admin address initialization)
+
   const handleDeploy = async () => {
-    if (!wallet.address || !deploymentManager.client || !contract || !contractId) {
+    if (
+      !wallet.address ||
+      !deploymentManager.client ||
+      !contract ||
+      !contractId
+    ) {
       addNotification("Please ensure wallet and contract are ready", "error");
+      return;
+    }
+
+    if (!contract.wasm_hash) {
+      addNotification("Contract WASM hash is missing", "error");
       return;
     }
 
     try {
       setStep(DeploymentStep.Deploying);
 
-      // Call deploy_from_wasm
-      const tx = await deploymentManager.client.deploy_from_wasm({
+      // Deploy the contract with admin parameter
+      // Use deploy_with_admin which accepts a typed Address parameter
+      // This automatically passes the connected wallet address as the admin
+      const tx = await deploymentManager.client.deploy_with_admin({
         deployer: wallet.address,
         contract_id: parseInt(contractId),
         wasm_hash: Buffer.from(contract.wasm_hash),
-        salt: Buffer.from(salt, 'hex'),
+        salt: Buffer.from(salt, "hex"),
+        admin: wallet.address,
       });
 
       // Sign and send
       const result = await tx.signAndSend();
 
-      // Get deployment ID from result
-      const deploymentResult = result.result;
-      const newDeploymentId = deploymentResult ? String(deploymentResult) : `${contractId}-${Date.now()}`;
+      console.log("Deployment result:", result);
+      console.log("result.result:", result.result);
+
+      // Get deployment ID from result (it's likely a number or wrapped in an object)
+      let newDeploymentId: string;
+      if (result.result) {
+        // Check if it has a value property (wrapped in Ok)
+        const deploymentValue =
+          (result.result as any).value !== undefined
+            ? (result.result as any).value
+            : result.result;
+
+        // If it's still an object, try to get a reasonable string representation
+        if (typeof deploymentValue === "object" && deploymentValue !== null) {
+          newDeploymentId = JSON.stringify(deploymentValue);
+        } else {
+          newDeploymentId = String(deploymentValue);
+        }
+      } else {
+        newDeploymentId = `${contractId}-${Date.now()}`;
+      }
+
+      console.log("Final deployment ID:", newDeploymentId);
       setDeploymentId(newDeploymentId);
+
+      // Increment deployment count in the registry
+      try {
+        if (registry.client) {
+          const incrementTx = await registry.client.increment_deployment_count({
+            contract_id: parseInt(contractId),
+          });
+          await incrementTx.signAndSend();
+          console.log("Successfully incremented deployment count");
+        }
+      } catch (incrementErr) {
+        console.error("Failed to increment deployment count:", incrementErr);
+        // Don't fail the whole deployment if this fails
+      }
 
       setStep(DeploymentStep.Success);
       addNotification("Contract deployed successfully!", "success");
@@ -146,7 +199,9 @@ export function DeployWizard() {
         <div className="deploy-container">
           <div className="loading-container">
             <Loader size="lg" />
-            <Text as="p" size="md">Loading contract...</Text>
+            <Text as="p" size="md">
+              Loading contract...
+            </Text>
           </div>
         </div>
       </Layout.Content>
@@ -234,7 +289,9 @@ export function DeployWizard() {
                       Author
                     </Text>
                     <Text as="span" size="xs" className="info-value monospace">
-                      {contract.author.substring(0, 16)}...
+                      {contract.author
+                        ? `${contract.author.substring(0, 16)}...`
+                        : "Unknown"}
                     </Text>
                   </div>
 
@@ -270,9 +327,15 @@ export function DeployWizard() {
                     placeholder="Random salt (auto-generated)"
                   />
                   <Text as="p" size="xs" className="field-hint">
-                    A unique salt ensures your deployment has a unique address. This is auto-generated but you can customize it.
+                    A unique salt ensures your deployment has a unique address.
+                    This is auto-generated but you can customize it.
                   </Text>
                 </div>
+
+                <Text as="p" size="sm" className="field-hint">
+                  If this contract requires initialization, your connected
+                  wallet address will be used automatically as the admin.
+                </Text>
               </div>
 
               <div className="wizard-actions">
@@ -283,11 +346,7 @@ export function DeployWizard() {
                 >
                   Cancel
                 </Button>
-                <Button
-                  variant="primary"
-                  size="md"
-                  onClick={handleDeploy}
-                >
+                <Button variant="primary" size="md" onClick={handleDeploy}>
                   <Icon.Rocket01 size="md" />
                   Deploy Contract
                 </Button>
@@ -301,27 +360,33 @@ export function DeployWizard() {
             <div className="deploying-card">
               <Card>
                 <div className="deploying-content">
-                <Loader size="lg" />
-                <Heading size="md" as="h3">
-                  Deploying Contract...
-                </Heading>
-                <Text as="p" size="md">
-                  Please confirm the transaction in your wallet
-                </Text>
-                <div className="deployment-steps">
-                  <div className="step active">
-                    <Icon.CheckCircle size="sm" />
-                    <Text as="span" size="sm">Preparing deployment</Text>
+                  <Loader size="lg" />
+                  <Heading size="md" as="h3">
+                    Deploying Contract...
+                  </Heading>
+                  <Text as="p" size="md">
+                    Please confirm the transaction in your wallet
+                  </Text>
+                  <div className="deployment-steps">
+                    <div className="step active">
+                      <Icon.CheckCircle size="sm" />
+                      <Text as="span" size="sm">
+                        Preparing deployment
+                      </Text>
+                    </div>
+                    <div className="step active">
+                      <Loader size="sm" />
+                      <Text as="span" size="sm">
+                        Submitting transaction
+                      </Text>
+                    </div>
+                    <div className="step">
+                      <Icon.Circle size="sm" />
+                      <Text as="span" size="sm">
+                        Confirming on network
+                      </Text>
+                    </div>
                   </div>
-                  <div className="step active">
-                    <Loader size="sm" />
-                    <Text as="span" size="sm">Submitting transaction</Text>
-                  </div>
-                  <div className="step">
-                    <Icon.Circle size="sm" />
-                    <Text as="span" size="sm">Confirming on network</Text>
-                  </div>
-                </div>
                 </div>
               </Card>
             </div>
@@ -333,43 +398,43 @@ export function DeployWizard() {
             <div className="success-card">
               <Card>
                 <div className="success-content">
-                <div className="success-icon">
-                  <Icon.CheckCircle size="xl" />
-                </div>
-                <Heading size="lg" as="h2">
-                  Deployment Successful!
-                </Heading>
-                <Text as="p" size="md">
-                  Your contract has been deployed to the Stellar network
-                </Text>
-
-                {deploymentId && (
-                  <div className="deployment-info">
-                    <Text as="span" size="sm" className="info-label">
-                      Deployment ID
-                    </Text>
-                    <Text as="p" size="sm" className="deployment-id">
-                      {deploymentId}
-                    </Text>
+                  <div className="success-icon">
+                    <Icon.CheckCircle size="xl" />
                   </div>
-                )}
+                  <Heading size="lg" as="h2">
+                    Deployment Successful!
+                  </Heading>
+                  <Text as="p" size="md">
+                    Your contract has been deployed to the Stellar network
+                  </Text>
 
-                <div className="success-actions">
-                  <Button
-                    variant="secondary"
-                    size="md"
-                    onClick={() => navigate("/marketplace")}
-                  >
-                    Back to Marketplace
-                  </Button>
-                  <Button
-                    variant="primary"
-                    size="md"
-                    onClick={() => navigate(`/marketplace/${contractId}`)}
-                  >
-                    View Contract Details
-                  </Button>
-                </div>
+                  {deploymentId && (
+                    <div className="deployment-info">
+                      <Text as="span" size="sm" className="info-label">
+                        Deployment ID
+                      </Text>
+                      <Text as="p" size="sm" className="deployment-id">
+                        {deploymentId}
+                      </Text>
+                    </div>
+                  )}
+
+                  <div className="success-actions">
+                    <Button
+                      variant="secondary"
+                      size="md"
+                      onClick={() => navigate("/marketplace")}
+                    >
+                      Back to Marketplace
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="md"
+                      onClick={() => navigate(`/marketplace/${contractId}`)}
+                    >
+                      View Contract Details
+                    </Button>
+                  </div>
                 </div>
               </Card>
             </div>
