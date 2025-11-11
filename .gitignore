@@ -40,6 +40,10 @@ lerna-debug.log*
 packages/*
 # if you have other workspace packages, add them here
 !packages/.gitkeep
+# Include generated contract packages for deployment
+!packages/contract_registry
+!packages/deployment_manager
+!packages/review_system
 
 # generated contract client imports
 src/contracts/*
