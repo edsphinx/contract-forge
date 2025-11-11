@@ -89,7 +89,7 @@ export function ReviewForm({ contractId, onReviewSubmitted }: ReviewFormProps) {
           aria-label={`Rate ${i} stars`}
         >
           ★
-        </button>
+        </button>,
       );
     }
     return stars;
@@ -98,19 +98,25 @@ export function ReviewForm({ contractId, onReviewSubmitted }: ReviewFormProps) {
   return (
     <form className="review-form" onSubmit={handleSubmit}>
       <div className="form-header">
-        <Text as="h3" size="md">Write a Review</Text>
+        <Text as="h3" size="md">
+          Write a Review
+        </Text>
       </div>
 
       <div className="form-group">
         <label htmlFor="rating">
-          <Text as="span" size="sm">Rating</Text>
+          <Text as="span" size="sm">
+            Rating
+          </Text>
         </label>
         <div className="star-rating">{renderStars()}</div>
       </div>
 
       <div className="form-group">
         <label htmlFor="comment">
-          <Text as="span" size="sm">Comment</Text>
+          <Text as="span" size="sm">
+            Comment
+          </Text>
         </label>
         <Textarea
           id="comment"
@@ -127,7 +133,12 @@ export function ReviewForm({ contractId, onReviewSubmitted }: ReviewFormProps) {
         </Text>
       </div>
 
-      <Button variant="primary" size="md" type="submit" disabled={isSubmitting || !wallet.address}>
+      <Button
+        variant="primary"
+        size="md"
+        type="submit"
+        disabled={isSubmitting || !wallet.address}
+      >
         {isSubmitting ? "Submitting..." : "Submit Review"}
       </Button>
     </form>

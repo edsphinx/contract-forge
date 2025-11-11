@@ -39,12 +39,14 @@ graph TD
 ### Dependency Levels
 
 **Level 0 (No Dependencies):**
+
 - **ContractRegistry** - Standalone contract
   - Does not depend on other ContractForge contracts
   - Stores contract metadata
   - Provides search and discovery
 
 **Level 1 (Depends on Level 0):**
+
 - **DeploymentManager** - Depends on ContractRegistry
   - Reads metadata from ContractRegistry
   - Updates deployment counts in ContractRegistry
@@ -56,6 +58,7 @@ graph TD
   - Works independently if validation is skipped
 
 **Level 2 (User-facing):**
+
 - **Frontend Application**
   - Interacts with all three contracts
   - Orchestrates user workflows
@@ -145,30 +148,36 @@ Contracts must be deployed in dependency order:
 ### Order of Deployment
 
 1. **First: ContractRegistry**
+
    ```bash
    stellar contract deploy \
      --wasm target/wasm32-unknown-unknown/release/contract_registry.wasm \
      --network local
    ```
+
    - No dependencies
    - Foundation of the system
    - Store the returned contract address
 
 2. **Second: DeploymentManager**
+
    ```bash
    stellar contract deploy \
      --wasm target/wasm32-unknown-unknown/release/deployment_manager.wasm \
      --network local
    ```
+
    - Needs ContractRegistry address (passed as parameter)
    - Or configure to accept registry address in function calls
 
 3. **Third: ReviewSystem**
+
    ```bash
    stellar contract deploy \
      --wasm target/wasm32-unknown-unknown/release/review_system.wasm \
      --network local
    ```
+
    - Optionally needs ContractRegistry address
    - Can work standalone
 
@@ -206,6 +215,7 @@ wasm = "target/wasm32-unknown-unknown/release/review_system.wasm"
    - Usage: Track deployment statistics
 
 **Client generation:**
+
 ```rust
 // In DeploymentManager contract
 use contract_registry::Client as RegistryClient;
@@ -230,6 +240,7 @@ let metadata = registry_client.get_contract(&contract_id);
 ### ContractRegistry
 
 **Public Interface:**
+
 ```rust
 // Write operations
 fn publish_contract(...) -> Result<String, Error>
@@ -247,6 +258,7 @@ fn search_by_tag(tag: String) -> Vec<ContractMetadata>
 ### DeploymentManager
 
 **Public Interface:**
+
 ```rust
 // Write operations
 fn deploy_from_registry(...) -> Result<Address, Error>
@@ -262,6 +274,7 @@ fn get_total_deployments() -> u32
 ### ReviewSystem
 
 **Public Interface:**
+
 ```rust
 // Write operations
 fn submit_review(...) -> Result<String, Error>
@@ -326,11 +339,13 @@ User 1:1 Review per Contract
 ### Event Flow
 
 Contracts emit events that can be listened to by:
+
 - Frontend (real-time updates)
 - Indexers (historical data)
 - Analytics (usage statistics)
 
 **ContractRegistry Events:**
+
 ```rust
 event ContractPublished(contract_id: String)
 event ContractUpdated(contract_id: String)
@@ -339,11 +354,13 @@ event ContractDeployed(contract_id: String, new_count: u32)
 ```
 
 **DeploymentManager Events:**
+
 ```rust
 event Deployed(deployment_id: String, contract_id: String, deployed_address: Address, deployer: Address)
 ```
 
 **ReviewSystem Events:**
+
 ```rust
 event ReviewSubmitted(review_id: String, contract_id: String, rating: u32)
 event ReviewUpvoted(review_id: String, voter: Address)
@@ -355,15 +372,15 @@ event ReviewUpvoted(review_id: String, voter: Address)
 
 ```typescript
 // 1. Import generated clients
-import * as ContractRegistry from 'contract-registry';
-import * as DeploymentManager from 'deployment-manager';
-import * as ReviewSystem from 'review-system';
+import * as ContractRegistry from "contract-registry";
+import * as DeploymentManager from "deployment-manager";
+import * as ReviewSystem from "review-system";
 
 // 2. Create client instances
 const registryClient = new ContractRegistry.Client({
   contractId: ContractRegistry.CONTRACT_ID,
-  networkPassphrase: 'Standalone Network ; February 2017',
-  rpcUrl: 'http://localhost:8000/soroban/rpc',
+  networkPassphrase: "Standalone Network ; February 2017",
+  rpcUrl: "http://localhost:8000/soroban/rpc",
   publicKey: walletAddress,
 });
 
@@ -373,7 +390,7 @@ const registryClient = new ContractRegistry.Client({
 const allContracts = await registryClient.get_all_contracts();
 const deployed = await deploymentManager.deploy_from_registry({
   registry_contract_id: ContractRegistry.CONTRACT_ID,
-  contract_id: 'contract_1',
+  contract_id: "contract_1",
   deployer: walletAddress,
   salt: generateSalt(),
 });
@@ -385,21 +402,21 @@ The frontend combines data from all contracts:
 
 ```typescript
 // Get contract details
-const contract = await registry.get_contract({ contract_id: 'contract_5' });
+const contract = await registry.get_contract({ contract_id: "contract_5" });
 
 // Get deployments of this contract
 const deployments = await deploymentManager.get_contract_deployments({
-  contract_id: 'contract_5'
+  contract_id: "contract_5",
 });
 
 // Get reviews for this contract
 const reviews = await reviewSystem.get_reviews_for_contract({
-  contract_id: 'contract_5'
+  contract_id: "contract_5",
 });
 
 // Get review summary
 const summary = await reviewSystem.get_review_summary({
-  contract_id: 'contract_5'
+  contract_id: "contract_5",
 });
 
 // Display comprehensive contract page
@@ -450,11 +467,13 @@ displayContractDetails({
 ## Scalability Considerations
 
 ### For MVP (Local/Testnet):
+
 - Store all data on-chain
 - Simple iteration for queries
 - No pagination
 
 ### For Production (Mainnet):
+
 - Implement pagination for large result sets
 - Use temporary storage for caching
 - Consider off-chain indexing for complex queries
@@ -463,16 +482,19 @@ displayContractDetails({
 ## Summary
 
 **Deployment Order:**
+
 1. ContractRegistry (no dependencies)
 2. DeploymentManager (depends on ContractRegistry)
 3. ReviewSystem (optional dependency on ContractRegistry)
 
 **Data Flow:**
+
 - Users publish contracts → ContractRegistry
 - Users deploy from registry → DeploymentManager → ContractRegistry
 - Users review contracts → ReviewSystem → (optional) ContractRegistry
 
 **Integration:**
+
 - All contracts are independent (loose coupling)
 - Cross-contract calls use generated clients
 - Frontend aggregates data from all three contracts
